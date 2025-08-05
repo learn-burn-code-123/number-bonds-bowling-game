@@ -288,10 +288,12 @@ h1 {
 }
 
 .question {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
+    font-size: 1rem;
+    margin-bottom: 5px;
     font-weight: bold;
     color: var(--primary-color);
+    position: relative;
+    z-index: 2;
 }
 
 .input-container {
@@ -308,15 +310,21 @@ h1 {
     justify-content: center;
     gap: 10px;
     margin-bottom: 15px;
-    margin-top: -50px; /* Move up by one button diameter */
+    margin-top: 10px; /* Positive margin to create space below the question */
     max-width: 300px;
+    position: relative;
+    z-index: 1;
 }
 
 /* Additional adjustment for mobile devices */
 @media (max-width: 768px) {
     .number-buttons {
-        margin-top: -60px; /* Move up more on mobile */
+        margin-top: 5px; /* Small margin on mobile */
         padding-bottom: 60px; /* Add padding at bottom to prevent cutoff */
+    }
+    
+    .question {
+        font-size: 0.9rem; /* Even smaller on mobile */
     }
 }
 

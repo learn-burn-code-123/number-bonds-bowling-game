@@ -2,16 +2,64 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Create audio context when user interacts with the page
     let audioContext;
+    let audioInitialized = false;
+    let usingFallback = false;
+    let isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     
-    // Initialize audio on first user interaction
-    document.body.addEventListener('click', initAudio, { once: true });
+    // Initialize audio on various user interactions for better mobile compatibility
+    const initEvents = ['click', 'touchstart', 'touchend'];
+    initEvents.forEach(event => {
+        document.body.addEventListener(event, initAudio, { once: true });
+    });
+    
+    // Also initialize on game-specific interactions
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden && !audioInitialized) {
+            initAudio();
+        }
+    });
     
     function initAudio() {
-        // Create audio context
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioInitialized) return;
         
-        // Create and set up sounds
-        createSounds();
+        try {
+            // Create audio context
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Resume audio context (needed for mobile browsers)
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            
+            // iOS requires special handling
+            if (isIOS) {
+                // Create and play a silent buffer to unlock audio
+                const silentBuffer = audioContext.createBuffer(1, 1, 22050);
+                const source = audioContext.createBufferSource();
+                source.buffer = silentBuffer;
+                source.connect(audioContext.destination);
+                source.start(0);
+                source.stop(0.001); // Very short sound
+                
+                // Add additional event listeners for iOS
+                ['touchend', 'touchstart'].forEach(event => {
+                    document.addEventListener(event, function() {
+                        if (audioContext && audioContext.state === 'suspended') {
+                            audioContext.resume();
+                        }
+                    });
+                });
+            }
+            
+            // Create and set up sounds
+            createSounds();
+            audioInitialized = true;
+            console.log('Audio initialized successfully on ' + (isIOS ? 'iOS' : navigator.userAgent));
+        } catch (error) {
+            console.error('Failed to initialize audio:', error);
+            // Fallback for devices that don't support Web Audio API
+            setupFallbackAudio();
+        }
     }
     
     function createSounds() {
@@ -41,6 +89,32 @@ document.addEventListener('DOMContentLoaded', () => {
     function playSound(audioBuffer) {
         if (!audioContext) return;
         
+        try {
+            // Make sure audio context is running (especially important for iOS)
+            if (audioContext.state !== 'running') {
+                audioContext.resume().then(() => {
+                    playBufferSound(audioBuffer);
+                }).catch(error => {
+                    console.error('Could not resume audio context:', error);
+                    // If we can't resume, try fallback
+                    if (!usingFallback) {
+                        setupFallbackAudio();
+                    }
+                });
+            } else {
+                playBufferSound(audioBuffer);
+            }
+        } catch (error) {
+            console.error('Error playing sound:', error);
+            // If Web Audio API fails, switch to fallback
+            if (!usingFallback) {
+                setupFallbackAudio();
+            }
+        }
+    }
+    
+    // Helper function to play buffer sound
+    function playBufferSound(audioBuffer) {
         const source = audioContext.createBufferSource();
         source.buffer = audioBuffer;
         source.connect(audioContext.destination);
@@ -170,5 +244,97 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         return buffer;
+    }
+    
+    // Fallback using HTML5 Audio for devices that don't support Web Audio API
+    function setupFallbackAudio() {
+        console.log('Setting up fallback audio');
+        audioInitialized = true;
+        usingFallback = true;
+        
+        // Create audio elements with actual sound files for better compatibility
+        const soundFiles = {
+            roll: 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADmAD///////////////////////////////////////////8AAAA8TEFNRTMuMTAwAc0AAAAAAAAAABSAJAJAQgAAgAAAA5hZuLrKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+            pins: 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADmAD///////////////////////////////////////////8AAAA8TEFNRTMuMTAwAc0AAAAAAAAAABSAJAJAQgAAgAAAA5hZuLrKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+            cheer: 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADmAD///////////////////////////////////////////8AAAA8TEFNRTMuMTAwAc0AAAAAAAAAABSAJAJAQgAAgAAAA5hZuLrKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+            incorrect: 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADmAD///////////////////////////////////////////8AAAA8TEFNRTMuMTAwAc0AAAAAAAAAABSAJAJAQgAAgAAAA5hZuLrKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+            win: 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADmAD///////////////////////////////////////////8AAAA8TEFNRTMuMTAwAc0AAAAAAAAAABSAJAJAQgAAgAAAA5hZuLrKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+        };
+        
+        // Create audio elements
+        const rollSound = new Audio(soundFiles.roll);
+        const pinsSound = new Audio(soundFiles.pins);
+        const cheerSound = new Audio(soundFiles.cheer);
+        const incorrectSound = new Audio(soundFiles.incorrect);
+        const winSound = new Audio(soundFiles.win);
+        
+        // Preload sounds
+        const sounds = [rollSound, pinsSound, cheerSound, incorrectSound, winSound];
+        sounds.forEach(sound => {
+            sound.load();
+            sound.volume = 0.5;
+            
+            // Add event listeners to handle iOS specific issues
+            if (isIOS) {
+                // iOS requires user interaction before playing
+                document.addEventListener('touchend', function() {
+                    sound.play().then(() => {
+                        sound.pause();
+                        sound.currentTime = 0;
+                    }).catch(e => console.log('Preload attempt:', e));
+                }, { once: true });
+            }
+        });
+        
+        // Helper function to play sound with better error handling
+        function playFallbackSound(sound) {
+            if (!sound) return;
+            
+            // Reset sound to beginning
+            sound.currentTime = 0;
+            
+            // Play with promise handling for better mobile support
+            const playPromise = sound.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.error('Error playing sound:', error);
+                    
+                    // For iOS, try to unlock audio on next user interaction
+                    if (isIOS) {
+                        const unlockAudio = function() {
+                            sound.play().then(() => {
+                                document.removeEventListener('touchend', unlockAudio);
+                                document.removeEventListener('click', unlockAudio);
+                            }).catch(e => console.error('Still cannot play:', e));
+                        };
+                        
+                        document.addEventListener('touchend', unlockAudio, { once: true });
+                        document.addEventListener('click', unlockAudio, { once: true });
+                    }
+                });
+            }
+        }
+        
+        // Override sound functions with improved HTML5 Audio versions
+        window.playRollSound = function() {
+            playFallbackSound(rollSound);
+        };
+        
+        window.playPinsSound = function() {
+            playFallbackSound(pinsSound);
+        };
+        
+        window.playCheerSound = function() {
+            playFallbackSound(cheerSound);
+        };
+        
+        window.playIncorrectSound = function() {
+            playFallbackSound(incorrectSound);
+        };
+        
+        window.playWinSound = function() {
+            playFallbackSound(winSound);
+        };
     }
 });
