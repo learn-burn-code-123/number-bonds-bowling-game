@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Bond Bowling Game</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1>Number Bond Bowling</h1>
+            <div class="score-display">Round: <span id="current-round">1</span>/10</div>
+        </div>
+
+        <div class="bowling-alley">
+            <div class="pins-container" id="pins-container">
+                <!-- Pins will be dynamically generated here -->
+            </div>
+            <div class="lane"></div>
+        </div>
+
+        <div class="game-controls">
+            <button id="roll-button" class="roll-button">Roll the Ball!</button>
+        </div>
+
+        <div class="number-bond-container" id="number-bond-container">
+            <div class="number-bond">
+                <div class="whole-circle">
+                    <span id="total-pins">10</span>
+                </div>
+                <div class="part-circles">
+                    <div class="part-circle">
+                        <span id="pins-down">0</span>
+                    </div>
+                    <div class="part-circle">
+                        <span id="pins-remaining">?</span>
+                    </div>
+                </div>
+            </div>
+            <div class="equation">
+                <span id="pins-down-eq">0</span> + <span id="pins-remaining-eq">?</span> = <span id="total-pins-eq">10</span>
+            </div>
+        </div>
+
+        <div class="answer-container" id="answer-container">
+            <p class="question">How many pins are still standing?</p>
+            <div class="input-container">
+                <div class="number-buttons" id="number-buttons">
+                    <!-- Number buttons will be generated here -->
+                </div>
+                <input type="number" id="answer-input" min="0" max="10" placeholder="?">
+                <button id="check-answer-button" class="check-button">Check</button>
+            </div>
+        </div>
+
+        <div class="feedback-container" id="feedback-container">
+            <p id="feedback-message"></p>
+        </div>
+    </div>
+
+    <div class="modal" id="start-modal">
+        <div class="modal-content">
+            <h2>Welcome to Number Bond Bowling!</h2>
+            <p>Learn number bonds to 10 while having fun bowling!</p>
+            <p>Roll the ball, count the pins, and figure out the missing number.</p>
+            <button id="start-game-button" class="start-button">Let's Bowl!</button>
+        </div>
+    </div>
+
+    <div class="modal" id="end-modal">
+        <div class="modal-content">
+            <h2>Number Bond Bowling Champion!</h2>
+            <div class="trophy">🏆</div>
+            <p>Great job! You've completed all rounds!</p>
+            <div class="recap-container">
+                <h3>Number Bonds to 10:</h3>
+                <div class="number-bonds-recap" id="number-bonds-recap">
+                    <!-- Will be filled dynamically -->
+                </div>
+            </div>
+            <button id="play-again-button" class="start-button">Play Again</button>
+        </div>
+    </div>
+
+    <script src="js/sounds.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
