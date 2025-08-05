@@ -308,6 +308,7 @@ h1 {
     justify-content: center;
     gap: 10px;
     margin-bottom: 15px;
+    margin-top: -50px; /* Move up by one button diameter */
     max-width: 300px;
 }
 
