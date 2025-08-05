@@ -81,6 +81,12 @@ h1 {
     box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
+@media (max-width: 768px) {
+    .bowling-alley {
+        height: 300px; /* Smaller height on mobile */
+    }
+}
+
 .lane {
     position: absolute;
     bottom: 0;
@@ -110,6 +116,14 @@ h1 {
     z-index: 2;
 }
 
+@media (max-width: 768px) {
+    .pins-container {
+        top: 20px; /* Position pins higher on mobile */
+        width: 220px; /* Narrower container on mobile */
+        height: 150px; /* Shorter container on mobile */
+    }
+}
+
 .pin {
     width: 30px;
     height: 60px;
@@ -122,9 +136,23 @@ h1 {
     position: relative;
 }
 
+@media (max-width: 768px) {
+    .pin {
+        width: 25px; /* Slightly smaller pins on mobile */
+        height: 50px;
+        margin: 3px;
+    }
+}
+
 .pin.fallen {
-    transform: rotate(90deg) translateY(20px);
+    transform: rotate(90deg) translateY(15px);
     opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+    .pin.fallen {
+        transform: rotate(90deg) translateY(10px); /* Less vertical movement on mobile */
+    }
 }
 
 .bowling-ball {

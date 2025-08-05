@@ -149,33 +149,67 @@ document.addEventListener('DOMContentLoaded', () => {
     function getPinPositions(totalPins) {
         const positions = [];
         
+        // Check if we're on mobile
+        const isMobile = window.innerWidth <= 768;
+        
+        // Adjust spacing for mobile
+        const spacing = isMobile ? 20 : 30;
+        const rowSpacing = isMobile ? 20 : 25;
+        
+        // Calculate center point
+        const centerX = isMobile ? 85 : 85;
+        
         // Different arrangements based on number of pins
         if (totalPins === 10) {
-            // Classic triangle arrangement
-            positions.push({x: 85, y: 0});  // Front pin
-            positions.push({x: 70, y: 15}); positions.push({x: 100, y: 15}); // Second row
-            positions.push({x: 55, y: 30}); positions.push({x: 85, y: 30}); positions.push({x: 115, y: 30}); // Third row
-            positions.push({x: 40, y: 45}); positions.push({x: 70, y: 45}); positions.push({x: 100, y: 45}); positions.push({x: 130, y: 45}); // Fourth row
+            // Classic triangle arrangement - better aligned for mobile
+            positions.push({x: centerX, y: 0});  // Front pin
+            positions.push({x: centerX - spacing/2, y: rowSpacing}); 
+            positions.push({x: centerX + spacing/2, y: rowSpacing}); // Second row
+            positions.push({x: centerX - spacing, y: rowSpacing*2}); 
+            positions.push({x: centerX, y: rowSpacing*2}); 
+            positions.push({x: centerX + spacing, y: rowSpacing*2}); // Third row
+            positions.push({x: centerX - spacing*1.5, y: rowSpacing*3}); 
+            positions.push({x: centerX - spacing/2, y: rowSpacing*3}); 
+            positions.push({x: centerX + spacing/2, y: rowSpacing*3}); 
+            positions.push({x: centerX + spacing*1.5, y: rowSpacing*3}); // Fourth row
         } else if (totalPins === 9) {
             // 3-3-3 arrangement
-            positions.push({x: 55, y: 0}); positions.push({x: 85, y: 0}); positions.push({x: 115, y: 0}); // First row
-            positions.push({x: 55, y: 25}); positions.push({x: 85, y: 25}); positions.push({x: 115, y: 25}); // Second row
-            positions.push({x: 55, y: 50}); positions.push({x: 85, y: 50}); positions.push({x: 115, y: 50}); // Third row
+            positions.push({x: centerX - spacing, y: 0}); 
+            positions.push({x: centerX, y: 0}); 
+            positions.push({x: centerX + spacing, y: 0}); // First row
+            positions.push({x: centerX - spacing, y: rowSpacing}); 
+            positions.push({x: centerX, y: rowSpacing}); 
+            positions.push({x: centerX + spacing, y: rowSpacing}); // Second row
+            positions.push({x: centerX - spacing, y: rowSpacing*2}); 
+            positions.push({x: centerX, y: rowSpacing*2}); 
+            positions.push({x: centerX + spacing, y: rowSpacing*2}); // Third row
         } else if (totalPins === 8) {
             // 2-3-3 arrangement
-            positions.push({x: 70, y: 0}); positions.push({x: 100, y: 0}); // First row
-            positions.push({x: 55, y: 25}); positions.push({x: 85, y: 25}); positions.push({x: 115, y: 25}); // Second row
-            positions.push({x: 55, y: 50}); positions.push({x: 85, y: 50}); positions.push({x: 115, y: 50}); // Third row
+            positions.push({x: centerX - spacing/2, y: 0}); 
+            positions.push({x: centerX + spacing/2, y: 0}); // First row
+            positions.push({x: centerX - spacing, y: rowSpacing}); 
+            positions.push({x: centerX, y: rowSpacing}); 
+            positions.push({x: centerX + spacing, y: rowSpacing}); // Second row
+            positions.push({x: centerX - spacing, y: rowSpacing*2}); 
+            positions.push({x: centerX, y: rowSpacing*2}); 
+            positions.push({x: centerX + spacing, y: rowSpacing*2}); // Third row
         } else if (totalPins === 7) {
             // 2-2-3 arrangement
-            positions.push({x: 70, y: 0}); positions.push({x: 100, y: 0}); // First row
-            positions.push({x: 70, y: 25}); positions.push({x: 100, y: 25}); // Second row
-            positions.push({x: 55, y: 50}); positions.push({x: 85, y: 50}); positions.push({x: 115, y: 50}); // Third row
+            positions.push({x: centerX - spacing/2, y: 0}); 
+            positions.push({x: centerX + spacing/2, y: 0}); // First row
+            positions.push({x: centerX - spacing/2, y: rowSpacing}); 
+            positions.push({x: centerX + spacing/2, y: rowSpacing}); // Second row
+            positions.push({x: centerX - spacing, y: rowSpacing*2}); 
+            positions.push({x: centerX, y: rowSpacing*2}); 
+            positions.push({x: centerX + spacing, y: rowSpacing*2}); // Third row
         } else if (totalPins === 6) {
             // 2-2-2 arrangement
-            positions.push({x: 70, y: 0}); positions.push({x: 100, y: 0}); // First row
-            positions.push({x: 70, y: 25}); positions.push({x: 100, y: 25}); // Second row
-            positions.push({x: 70, y: 50}); positions.push({x: 100, y: 50}); // Third row
+            positions.push({x: centerX - spacing/2, y: 0}); 
+            positions.push({x: centerX + spacing/2, y: 0}); // First row
+            positions.push({x: centerX - spacing/2, y: rowSpacing}); 
+            positions.push({x: centerX + spacing/2, y: rowSpacing}); // Second row
+            positions.push({x: centerX - spacing/2, y: rowSpacing*2}); 
+            positions.push({x: centerX + spacing/2, y: rowSpacing*2}); // Third row
         }
         
         return positions;
