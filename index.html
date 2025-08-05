@@ -23,41 +23,44 @@
 
         <div class="game-controls">
             <button id="roll-button" class="roll-button">Roll the Ball!</button>
+            <div class="feedback-message-container">
+                <p id="feedback-message"></p>
+            </div>
         </div>
 
-        <div class="number-bond-container" id="number-bond-container">
-            <div class="number-bond">
-                <div class="whole-circle">
-                    <span id="total-pins">10</span>
-                </div>
-                <div class="part-circles">
-                    <div class="part-circle">
-                        <span id="pins-down">0</span>
+        <div class="game-interaction-area">
+            <div class="number-bond-container" id="number-bond-container">
+                <div class="number-bond">
+                    <div class="whole-circle">
+                        <span id="total-pins">10</span>
                     </div>
-                    <div class="part-circle">
-                        <span id="pins-remaining">?</span>
+                    <div class="part-circles">
+                        <div class="part-circle">
+                            <span id="pins-down">0</span>
+                        </div>
+                        <div class="part-circle">
+                            <span id="pins-remaining">?</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="equation">
-                <span id="pins-down-eq">0</span> + <span id="pins-remaining-eq">?</span> = <span id="total-pins-eq">10</span>
-            </div>
-        </div>
-
-        <div class="answer-container" id="answer-container">
-            <p class="question">How many pins are still standing?</p>
-            <div class="input-container">
-                <div class="number-buttons" id="number-buttons">
-                    <!-- Number buttons will be generated here -->
+                <div class="equation">
+                    <span id="pins-down-eq">0</span> + <span id="pins-remaining-eq">?</span> = <span id="total-pins-eq">10</span>
                 </div>
-                <input type="number" id="answer-input" min="0" max="10" placeholder="?">
-                <button id="check-answer-button" class="check-button">Check</button>
+            </div>
+
+            <div class="answer-container" id="answer-container">
+                <p class="question">How many pins are still standing?</p>
+                <div class="input-container">
+                    <div class="number-buttons" id="number-buttons">
+                        <!-- Number buttons will be generated here -->
+                    </div>
+                    <input type="number" id="answer-input" min="0" max="10" placeholder="?">
+                    <button id="check-answer-button" class="check-button">Check</button>
+                </div>
             </div>
         </div>
 
-        <div class="feedback-container" id="feedback-container">
-            <p id="feedback-message"></p>
-        </div>
+        <!-- Feedback message moved to game controls -->
     </div>
 
     <div class="modal" id="start-modal">
