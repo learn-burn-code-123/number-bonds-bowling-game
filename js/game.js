@@ -369,27 +369,43 @@ document.addEventListener('DOMContentLoaded', () => {
     function populateRecap() {
         numberBondsRecap.innerHTML = '';
         
-        // Sort number bonds by total and then by first number
+        // Sort number bonds by total and then by part1
         const sortedBonds = [...gameState.numberBondPairs].sort((a, b) => {
             if (a.total !== b.total) return a.total - b.total;
-            return a.first - b.first;
+            return a.part1 - b.part1;
         });
         
         // Create unique pairs (remove duplicates)
         const uniquePairs = [];
         sortedBonds.forEach(bond => {
-            if (!uniquePairs.some(p => p.first === bond.first && p.second === bond.second && p.total === bond.total)) {
+            if (!uniquePairs.some(p => 
+                p.part1 === bond.part1 && 
+                p.part2 === bond.part2 && 
+                p.total === bond.total)) {
                 uniquePairs.push(bond);
             }
         });
+        
+        // Create a grid container for the equations
+        const gridContainer = document.createElement('div');
+        gridContainer.className = 'bond-grid';
+        numberBondsRecap.appendChild(gridContainer);
         
         // Create elements for each unique pair
         uniquePairs.forEach(bond => {
             const pairElement = document.createElement('div');
             pairElement.className = 'bond-pair';
-            pairElement.textContent = `${bond.first} + ${bond.second} = ${bond.total}`;
-            numberBondsRecap.appendChild(pairElement);
+            pairElement.textContent = `${bond.part1} + ${bond.part2} = ${bond.total}`;
+            gridContainer.appendChild(pairElement);
         });
+        
+        // If we have fewer than expected equations, add a message
+        if (uniquePairs.length === 0) {
+            const noEquationsMsg = document.createElement('div');
+            noEquationsMsg.className = 'no-equations-message';
+            noEquationsMsg.textContent = 'No number bonds recorded. Try again!';
+            numberBondsRecap.appendChild(noEquationsMsg);
+        }
     }
     
     // Get random positive feedback
