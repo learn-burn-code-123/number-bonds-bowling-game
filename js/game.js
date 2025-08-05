@@ -156,8 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const spacing = isMobile ? 20 : 30;
         const rowSpacing = isMobile ? 20 : 25;
         
-        // Calculate center point
-        const centerX = isMobile ? 85 : 85;
+        // Calculate center point - more centered on mobile
+        const centerX = isMobile ? 110 : 85;
         
         // Different arrangements based on number of pins
         if (totalPins === 10) {

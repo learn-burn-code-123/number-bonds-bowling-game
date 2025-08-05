@@ -121,6 +121,7 @@ h1 {
         top: 20px; /* Position pins higher on mobile */
         width: 220px; /* Narrower container on mobile */
         height: 150px; /* Shorter container on mobile */
+        left: 50%; /* Center horizontally */
     }
 }
 
@@ -158,7 +159,7 @@ h1 {
 .bowling-ball {
     position: absolute;
     bottom: 50px;
-    left: 10%;
+    left: 5%; /* Start further left */
     width: 50px;
     height: 50px;
     background-image: radial-gradient(circle at 35% 35%, #ff6b6b, #d32f2f);
@@ -167,6 +168,15 @@ h1 {
                 inset -5px -5px 10px rgba(0, 0, 0, 0.3);
     z-index: 3;
     transition: transform 1s ease, left 1s ease;
+}
+
+@media (max-width: 768px) {
+    .bowling-ball {
+        width: 40px; /* Slightly smaller on mobile */
+        height: 40px;
+        bottom: 40px;
+        left: 2%; /* Even further left on mobile */
+    }
 }
 
 .bowling-ball.rolling {
